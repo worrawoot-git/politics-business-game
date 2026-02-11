@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tycoon: Politics & Business</title>
+    <title>The Tycoon: Politics & Business Simulation</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1e272e;
-            --card: #2f3640;
-            --text: #dcdde1;
-            --money: #4cd137;
-            --risk: #e84118;
-            --conn: #00a8ff;
+            --bg: #2d3436;
+            --card: #dfe6e9;
+            --text: #2d3436;
+            --money: #00b894;
+            --risk: #d63031;
+            --conn: #0984e3;
         }
 
         body {
@@ -31,8 +31,8 @@
         .container {
             background: var(--card);
             width: 100%;
-            max-width: 500px; /* ทรงมือถือ */
-            padding: 25px;
+            max-width: 600px;
+            padding: 30px;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
@@ -40,8 +40,8 @@
             overflow: hidden;
         }
 
-        h1 { color: #fbc531; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        h3 { margin-top: 5px; color: #7f8fa6; font-weight: 400; }
+        h1 { color: #2d3436; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+        h3 { margin-top: 5px; color: #636e72; font-weight: 400; }
 
         /* Dashboard */
         .dashboard {
@@ -49,12 +49,13 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin: 20px 0;
-            background: rgba(0,0,0,0.2);
+            background: white;
             padding: 15px;
             border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .stat-box { display: flex; flex-direction: column; align-items: center; }
-        .stat-val { font-size: 1.5rem; font-weight: bold; }
+        .stat-val { font-size: 1.4rem; font-weight: bold; }
         .stat-label { font-size: 0.8rem; opacity: 0.7; }
 
         /* Scenario Card */
@@ -62,51 +63,71 @@
             background: #fff;
             color: #333;
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 20px;
-            min-height: 180px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            justify-content: flex-start;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--conn);
         }
         .tag { 
-            background: #333; color: white; padding: 2px 8px; border-radius: 4px; 
-            font-size: 0.7rem; align-self: center; margin-bottom: 10px;
+            background: #2d3436; color: white; padding: 4px 10px; border-radius: 20px; 
+            font-size: 0.75rem; align-self: flex-start; margin-bottom: 10px; display: inline-block;
         }
+        .s-title { margin: 0 0 10px 0; color: #2d3436; font-size: 1.2rem; font-weight: bold; }
+        .s-desc { margin: 0; line-height: 1.6; font-size: 1rem; color: #636e72; }
 
-        /* Buttons */
-        .btn-action {
+        /* Buttons (Choices) */
+        .btn-choice {
             width: 100%;
             padding: 15px;
             margin: 8px 0;
             border: none;
             border-radius: 10px;
             font-family: 'Sarabun';
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: white;
+            color: #2d3436;
+            border: 2px solid #b2bec3;
+            text-align: left;
         }
+        .btn-choice:hover { transform: translateY(-2px); border-color: var(--conn); background: #f1f2f6; }
         
-        .btn-white { background: #3498db; color: white; } /* Market Strategy */
-        .btn-grey { background: #576574; color: white; } /* Grey Strategy */
-        
-        .btn-white:hover { background: #2980b9; transform: scale(1.02); }
-        .btn-grey:hover { background: #2c3e50; transform: scale(1.02); border: 2px solid #e84118; }
-
-        .risk-badge { font-size: 0.8rem; background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 4px; }
+        .risk-badge { 
+            font-size: 0.7rem; background: #636e72; color: white; 
+            padding: 2px 6px; border-radius: 4px; margin-left: 10px; white-space: nowrap;
+        }
 
         /* Intro & End */
         .step { display: none; }
         .step.active { display: block; animation: fadeIn 0.5s; }
-        input { padding: 10px; width: 80%; border-radius: 5px; border: none; margin-bottom: 10px; }
-        .start-btn { background: #fbc531; color: #333; padding: 10px 30px; border:none; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
+        input { padding: 12px; width: 70%; border-radius: 8px; border: 1px solid #b2bec3; margin-bottom: 15px; font-family: 'Sarabun'; }
+        
+        .btn-main { 
+            background: var(--conn); color: white; padding: 12px 30px; 
+            border:none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; 
+            box-shadow: 0 4px 0 #0652dd; transition: 0.2s;
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #0652dd; }
+        .btn-main:active { transform: translateY(2px); box-shadow: 0 0 0 #0652dd; }
+
+        .btn-download { background: #00b894; box-shadow: 0 4px 0 #006266; margin-right: 10px;}
+        .btn-download:hover { box-shadow: 0 6px 0 #006266; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Result Styles */
+        .result-box {
+            background: white; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -114,19 +135,23 @@
 <div class="container" id="game-ui">
 
     <div id="step-intro" class="step active">
-        <div style="font-size: 4rem;">🏢</div>
+        <div style="font-size: 5rem; margin-bottom: 10px;">🏙️</div>
         <h1>The Tycoon</h1>
         <h3>Politics & Business Simulation</h3>
-        <p>คุณคือ CEO ใหม่ เป้าหมายคือนำพาบริษัทเข้าตลาดหลักทรัพย์<br>จะเล่นตามกติกา หรือ เล่นเส้นสาย?</p>
+        <p style="margin: 20px 0; color: #636e72;">
+            ยินดีต้อนรับสู่โลกธุรกิจที่ไร้ความปราณี<br>
+            คุณต้องตัดสินใจว่าจะบริหารบริษัทด้วย "ฝีมือ" หรือ "เส้นสาย"<br>
+            ระวัง! ทุกการกระทำมีความเสี่ยง
+        </p>
         <input type="text" id="company-name" placeholder="ตั้งชื่อบริษัทของคุณ...">
         <br>
-        <button class="start-btn" onclick="startGame()">เปิดบริษัท</button>
+        <button class="btn-main" onclick="startGame()">เริ่มบริหารธุรกิจ</button>
     </div>
 
     <div id="step-game" class="step">
         <div class="dashboard">
             <div class="stat-box">
-                <span class="stat-val" id="val-money" style="color:var(--money)">10M</span>
+                <span class="stat-val" id="val-money" style="color:var(--money)">10 M</span>
                 <span class="stat-label">💰 เงินทุน</span>
             </div>
             <div class="stat-box">
@@ -139,209 +164,283 @@
             </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; color:#7f8fa6; font-size:0.8rem; margin-bottom:5px;">
-            <span>Quarter: <span id="q-num">1</span>/8</span>
+        <div style="display:flex; justify-content:space-between; color:#636e72; font-size:0.85rem; margin-bottom:8px;">
+            <span>ไตรมาสที่: <span id="q-num">1</span>/8</span>
             <span id="q-topic">Topic</span>
         </div>
 
         <div class="scenario-card">
             <span class="tag" id="s-tag">EVENT</span>
-            <h2 id="s-title" style="margin:0 0 10px 0;">...</h2>
-            <p id="s-desc" style="margin:0; line-height:1.5;">...</p>
+            <div class="s-title" id="s-title">...</div>
+            <div class="s-desc" id="s-desc">...</div>
         </div>
 
-        <button class="btn-action btn-white" onclick="choose(0)">
-            <span id="choice-0-txt">ทางเลือก A</span>
-            <span class="risk-badge">Risk: Low</span>
-        </button>
-        <button class="btn-action btn-grey" onclick="choose(1)">
-            <span id="choice-1-txt">ทางเลือก B</span>
-            <span class="risk-badge">Risk: High</span>
-        </button>
+        <div id="choices-container">
+            </div>
     </div>
 
     <div id="step-end" class="step">
-        <h1>บทสรุปธุรกิจ</h1>
-        <h2 id="end-company" style="color:#fbc531;"></h2>
-        <div id="end-icon" style="font-size: 5rem; margin: 20px 0;"></div>
-        <h3 id="end-status" style="color:white; font-size:1.5rem;"></h3>
-        <p id="end-desc" style="background:rgba(255,255,255,0.1); padding:15px; border-radius:10px;"></p>
+        <h1 style="font-size: 1.5rem; color:#636e72;">รายงานผลประกอบการ</h1>
+        <h2 id="end-company" style="color:#2d3436; margin: 10px 0; font-size: 2rem;"></h2>
         
-        <div style="text-align:left; margin-top:20px; font-size:0.9rem;">
-            <p>💰 มูลค่าบริษัทสุดท้าย: <span id="end-money"></span></p>
-            <p>🔥 ระดับความเสี่ยงสะสม: <span id="end-risk"></span></p>
+        <div class="result-box">
+            <div style="text-align:center; font-size: 4rem; margin-bottom: 10px;" id="end-icon"></div>
+            <h3 id="end-status" style="text-align:center; font-size:1.4rem; color:#2d3436; margin:0;"></h3>
+            <p id="end-desc" style="color:#636e72; line-height:1.6; text-align:center;"></p>
+            
+            <hr style="border:0; border-top:1px dashed #b2bec3; margin: 15px 0;">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; text-align:center;">
+                <div>
+                    <small>💰 ทรัพย์สิน</small><br>
+                    <strong id="end-money" style="color:var(--money); font-size:1.2rem;"></strong>
+                </div>
+                <div>
+                    <small>🤝 เส้นสาย</small><br>
+                    <strong id="end-conn" style="color:var(--conn); font-size:1.2rem;"></strong>
+                </div>
+                <div>
+                    <small>🔥 คดีความ</small><br>
+                    <strong id="end-risk" style="color:var(--risk); font-size:1.2rem;"></strong>
+                </div>
+            </div>
         </div>
 
-        <button class="start-btn" onclick="location.reload()" style="margin-top:20px;">เล่นใหม่</button>
+        <div id="btn-group">
+            <button class="btn-main btn-download" onclick="downloadResult()">📸 ดาวน์โหลดผล (PNG)</button>
+            <button class="btn-main" style="background:#636e72; box-shadow: 0 4px 0 #2d3436;" onclick="location.reload()">🔄 เล่นใหม่</button>
+        </div>
     </div>
 
 </div>
 
 <script>
+    // --- Configuration ---
     let stats = { money: 10, conn: 0, risk: 0 }; // Money in Millions
     let currentQ = 0;
     let companyName = "";
 
-    // 8 ไตรมาส (Quarters) - สถานการณ์จำลอง Politics & Business
+    // --- Scenarios Data (3 Choices each) ---
     const events = [
         {
-            tag: "สัมปทานรัฐ",
-            title: "ประมูลโครงการรถไฟฟ้า",
-            desc: "รัฐบาลเปิดประมูลโครงการใหญ่ คู่แข่งของคุณมีเทคโนโลยีดีพอๆ กัน แต่คุณอยากชนะ",
-            c1: { txt: "ยื่นซองประมูลปกติ เน้นคุณภาพ", m: -2, c: 0, r: 0, msg: "คุณแพ้ประมูลให้คู่แข่งที่เส้นใหญ่กว่า" },
-            c2: { txt: "ให้หุ้นลมแก่หลานรัฐมนตรี", m: +20, c: +20, r: +15, msg: "คุณชนะประมูล! กำไรมหาศาล แต่เริ่มมีคนซุบซิบ" }
+            tag: "สัมปทานภาครัฐ",
+            title: "โครงการรถไฟฟ้าสายใหม่",
+            desc: "รัฐบาลเปิดประมูลโครงการรถไฟฟ้ามูลค่ามหาศาล คู่แข่งของคุณเป็นบริษัทข้ามชาติที่มีเทคโนโลยีล้ำสมัยกว่า แต่คุณรู้ว่า 'ซองประมูล' นี้มีช่องโหว่",
+            choices: [
+                { txt: "ยื่นประมูลปกติ เน้นคุณภาพงานและราคาเป็นธรรม", eff: { m: -2, c: 0, r: 0 }, riskLabel: "Low" },
+                { txt: "จ้างที่ปรึกษาที่เป็น 'หลานชาย' รัฐมนตรีคมนาคมมาช่วยงาน", eff: { m: +15, c: +20, r: +15 }, riskLabel: "Med" },
+                { txt: "ฮั้วประมูล! นัดคู่แข่งกินข้าวแล้วแบ่งเค้กกันลับๆ", eff: { m: +30, c: +10, r: +35 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "กฎหมายใหม่",
-            title: "พ.ร.บ. ควบคุมมลพิษ",
-            desc: "รัฐกำลังจะออกกฎหมายใหม่ที่ทำให้ต้นทุนโรงงานคุณสูงขึ้นมาก",
-            c1: { txt: "ลงทุนปรับปรุงโรงงานให้เป็นสีเขียว", m: -5, c: -5, r: -5, msg: "ต้นทุนหายไปเยอะ แต่ได้ภาพลักษณ์แบรนด์รักษ์โลก" },
-            c2: { txt: "ล็อบบี้ ส.ส. ให้คว่ำร่างกฎหมายนี้", m: -2, c: +10, r: +10, msg: "กฎหมายถูกปัดตก! คุณประหยัดเงินได้เยอะ แต่ NGO เริ่มจับตา" }
+            tag: "กฎหมายสิ่งแวดล้อม",
+            title: "พ.ร.บ. อากาศสะอาด",
+            desc: "รัฐสภากำลังพิจารณากฎหมายควบคุมมลพิษฉบับใหม่ ซึ่งจะทำให้ต้นทุนโรงงานของคุณพุ่งสูงขึ้น 40% คุณจะจัดการอย่างไร?",
+            choices: [
+                { txt: "ยอมรับและลงทุนเทคโนโลยีสีเขียว (Green Tech)", eff: { m: -8, c: 0, r: -10 }, riskLabel: "Low" },
+                { txt: "ล็อบบี้กรรมาธิการ ให้ชะลอกฎหมายออกไปก่อน", eff: { m: -2, c: +15, r: +10 }, riskLabel: "Med" },
+                { txt: "แอบปล่อยของเสียตอนกลางคืน ลดต้นทุนการบำบัด", eff: { m: +5, c: 0, r: +30 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "วิกฤตสื่อ",
-            title: "ข่าวลือเรื่องแรงงาน",
-            desc: "มีนักข่าวขุดคุ้ยว่าโรงงานของคุณใช้แรงงานผิดกฎหมาย",
-            c1: { txt: "แถลงข่าวและยอมให้ตรวจสอบ", m: -3, c: 0, r: -5, msg: "หุ้นตกชั่วคราว แต่ความเชื่อมั่นกลับคืนมา" },
-            c2: { txt: "ใช้เส้นสายสั่งปิดข่าว/ข่มขู่นักข่าว", m: -1, c: -5, r: +20, msg: "ข่าวเงียบไป แต่ความเสี่ยงที่จะระเบิดภายหลังสูงมาก" }
+            tag: "วิกฤตแรงงาน",
+            title: "ข่าวลือการใช้แรงงานทาส",
+            desc: "NGO ออกรายงานแฉว่า Supplier ของคุณมีการใช้แรงงานผิดกฎหมายและยึดพาสปอร์ต หุ้นของคุณเริ่มดิ่งลงเหว",
+            choices: [
+                { txt: "ตัดสัญญากับ Supplier ทันทีและยอมให้ตรวจสอบ", eff: { m: -5, c: 0, r: -5 }, riskLabel: "Low" },
+                { txt: "ทำแคมเปญ PR สร้างภาพลักษณ์ (Greenwashing) กลบข่าว", eff: { m: -3, c: +5, r: +5 }, riskLabel: "Med" },
+                { txt: "ใช้เส้นสายตำรวจข่มขู่พยานและปิดปากแหล่งข่าว", eff: { m: -1, c: -5, r: +40 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "การเลือกตั้ง",
-            title: "เดิมพันขั้วอำนาจ",
-            desc: "ใกล้เลือกตั้ง พรรค A (เน้นธุรกิจ) กับ พรรค B (เน้นสวัสดิการ) สูสีกันมาก",
-            c1: { txt: "วางตัวเป็นกลาง ไม่ยุ่งการเมือง", m: 0, c: -10, r: 0, msg: "ปลอดภัย แต่พอพรรค A ชนะ คุณก็ไม่ได้โบนัสอะไรพิเศษ" },
-            c2: { txt: "ทุ่มเงินบริจาคให้พรรค A เต็มที่", m: -5, c: +30, r: +10, msg: "พรรค A ชนะ! คุณกลายเป็นนายทุนใหญ่ของรัฐบาลชุดใหม่" }
+            tag: "การตรวจสอบภาษี",
+            title: "จดหมายจากกรมสรรพากร",
+            desc: "สรรพากรสงสัยว่าบริษัทของคุณมีการตกแต่งบัญชีเพื่อเลี่ยงภาษี และขอเข้าตรวจสอบเอกสารย้อนหลัง 5 ปี",
+            choices: [
+                { txt: "ให้ความร่วมมือและจ่ายภาษีส่วนที่ขาดพร้อมค่าปรับ", eff: { m: -10, c: 0, r: -20 }, riskLabel: "Low" },
+                { txt: "ใช้เทคนิคทางบัญชีและช่องว่างกฎหมายสู้คดี", eff: { m: -4, c: 0, r: +10 }, riskLabel: "Med" },
+                { txt: "จ่าย 'ค่าน้ำร้อนน้ำชา' ให้เจ้าหน้าที่ชุดตรวจ", eff: { m: -1, c: +5, r: +25 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "ตรวจสอบบัญชี",
-            title: "สรรพากรมาเยือน",
-            desc: "กรมสรรพากรขอตรวจสอบบัญชีย้อนหลังอย่างละเอียด",
-            c1: { txt: "ให้ตรวจตามจริง (จ่ายภาษีเพิ่ม)", m: -8, c: 0, r: -10, msg: "เจ็บตัวหนักมาก เงินสดแทบหมด แต่รอดคุก" },
-            c2: { txt: "โทรหา 'ผู้ใหญ่' ให้ช่วยเคลียร์", m: -2, c: -10, r: +15, msg: "เรื่องเงียบกริบ แต่คุณเป็นหนี้บุญคุณก้อนโต" }
+            tag: "การเมืองเลือกตั้ง",
+            title: "การระดมทุนพรรคการเมือง",
+            desc: "ใกล้เลือกตั้งใหญ่ พรรค A (ฝ่ายรัฐบาล) และ พรรค B (ฝ่ายค้านมาแรง) ต่างส่งคนมาขอเงินสนับสนุนจากคุณ",
+            choices: [
+                { txt: "วางตัวเป็นกลาง ไม่สนับสนุนพรรคใดเลย", eff: { m: 0, c: -10, r: 0 }, riskLabel: "Low" },
+                { txt: "แทงกั๊ก! บริจาคให้ทั้งสองฝ่ายเท่าๆ กัน", eff: { m: -4, c: +10, r: +5 }, riskLabel: "Med" },
+                { txt: "ทุ่มหมดหน้าตักให้พรรคที่มีแนวโน้มชนะ เพื่อหวังสัมปทาน", eff: { m: -8, c: +35, r: +20 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "คู่แข่ง",
-            title: "สงครามราคา",
-            desc: "คู่แข่งต่างชาติเข้ามาทุ่มตลาด ขายของถูกกว่าคุณ",
-            c1: { txt: "แข่งด้วยนวัตกรรมและคุณภาพ", m: -5, c: 0, r: 0, msg: "ยอดขายลดลงบ้าง แต่ลูกค้าประจำยังอยู่" },
-            c2: { txt: "วิ่งเต้นให้รัฐตั้งกำแพงภาษีนำเข้า", m: -3, c: -5, r: +10, msg: "รัฐบาลช่วยกีดกันคู่แข่งให้ คุณผูกขาดตลาดอีกครั้ง" }
+            tag: "คู่แข่งต่างชาติ",
+            title: "ทุนจีนสีเทาบุกตลาด",
+            desc: "คู่แข่งรายใหม่จากต่างประเทศเข้ามาทุ่มตลาด ขายสินค้าถูกกว่าคุณครึ่งหนึ่งโดยไม่สนกำไร",
+            choices: [
+                { txt: "สู้ด้วยคุณภาพและบริการหลังการขาย", eff: { m: -5, c: 0, r: 0 }, riskLabel: "Low" },
+                { txt: "ควบรวมกิจการ (M&A) เพื่อลดการแข่งขัน", eff: { m: -10, c: +5, r: +5 }, riskLabel: "Med" },
+                { txt: "วิ่งเต้นให้รัฐออกกฎกีดกันทางการค้า (Protectionism)", eff: { m: -3, c: +20, r: +15 }, riskLabel: "High" }
+            ]
         },
         {
             tag: "ภัยพิบัติ",
-            title: "น้ำท่วมโรงงาน",
-            desc: "โรงงานเสียหายหนัก รัฐมีงบเยียวยาจำกัด",
-            c1: { txt: "ใช้เงินประกันซ่อมเอง", m: -10, c: 0, r: 0, msg: "เงินเกือบหมดบัญชี บริษัทอยู่ในภาวะวิกฤต" },
-            c2: { txt: "ใช้เส้นลัดคิวรับเงินเยียวยาก่อนชาวบ้าน", m: +5, c: -5, r: +15, msg: "ได้เงินฟรีมาฟื้นฟู แต่ชาวบ้านด่ากันทั้งเมือง" }
+            title: "โรงงานน้ำท่วมใหญ่",
+            desc: "พายุเข้าทำให้โรงงานหลักจมน้ำ เสียหายหนักมาก รัฐบาลมีงบเยียวยาจำกัดสำหรับผู้ประสบภัย",
+            choices: [
+                { txt: "กู้เงินธนาคารมาฟื้นฟูเองตามระบบ", eff: { m: -12, c: 0, r: 0 }, riskLabel: "Low" },
+                { txt: "ขอลัดคิวรับเงินเยียวยาก่อนชาวบ้าน", eff: { m: +5, c: -5, r: +10 }, riskLabel: "Med" },
+                { txt: "เคลมประกันเกินจริง โดยร่วมมือกับเจ้าหน้าที่", eff: { m: +10, c: +5, r: +30 }, riskLabel: "High" }
+            ]
         },
         {
-            tag: "จุดตัดสิน",
-            title: "โครงการ Mega Project",
-            desc: "โปรเจ็คสุดท้ายที่จะทำให้บริษัทเข้าตลาดหลักทรัพย์ได้ แต่ต้องผ่าน EIA (สิ่งแวดล้อม)",
-            c1: { txt: "ทำ EIA อย่างโปร่งใส", m: -5, c: 0, r: 0, msg: "ผ่านแบบเฉียดฉิว เข้าตลาดหุ้นได้อย่างภูมิใจ" },
-            c2: { txt: "ยัดเงินกรรมการ EIA", m: -2, c: 0, r: +25, msg: "ผ่านฉลุย! แต่ความลับไม่มีในโลก..." }
+            tag: "จุดเปลี่ยนครั้งสำคัญ",
+            title: "นำบริษัทเข้าตลาดหลักทรัพย์ (IPO)",
+            desc: "ถึงเวลาขยายกิจการระดับโลก แต่ ก.ล.ต. เข้มงวดเรื่องธรรมาภิบาลมาก คุณต้องผ่านด่านนี้ให้ได้",
+            choices: [
+                { txt: "ทำบัญชีโปร่งใส 100% แม้กำไรจะดูน้อยลง", eff: { m: -3, c: 0, r: -10 }, riskLabel: "Low" },
+                { txt: "แต่งตัวเลขบัญชีให้ดูสวยหรู (Window Dressing)", eff: { m: +10, c: 0, r: +20 }, riskLabel: "Med" },
+                { txt: "เชิญอดีตนายกรัฐมนตรีมานั่งเป็นประธานบอร์ด", eff: { m: -5, c: +30, r: +10 }, riskLabel: "High" }
+            ]
         }
     ];
 
+    // --- Game Logic ---
+
     function startGame() {
-        companyName = document.getElementById('company-name').value || "My Company";
+        const inputName = document.getElementById('company-name').value;
+        if (!inputName.trim()) { alert("กรุณาตั้งชื่อบริษัทก่อนเริ่มเกม"); return; }
+        companyName = inputName;
+        
         document.getElementById('step-intro').classList.remove('active');
         document.getElementById('step-game').classList.add('active');
         renderEvent();
     }
 
     function renderEvent() {
-        if(currentQ >= events.length) {
-            endGame();
-            return;
-        }
-        
-        // Check Bankruptcy
-        if(stats.money <= 0) {
-            endGame("bankrupt");
-            return;
-        }
-        // Check Jail (Random chance if risk > 80)
-        if(stats.risk > 80 && Math.random() > 0.5) {
-            endGame("jail");
-            return;
-        }
+        // Game Over Conditions
+        if (stats.money <= -10) { endGame("bankrupt"); return; }
+        if (stats.risk >= 90 && Math.random() > 0.3) { endGame("jail"); return; }
+        if (currentQ >= events.length) { endGame(); return; }
 
         const e = events[currentQ];
+        
+        // Update UI Text
         document.getElementById('q-num').innerText = currentQ + 1;
         document.getElementById('q-topic').innerText = e.tag;
         document.getElementById('s-tag').innerText = e.tag;
         document.getElementById('s-title').innerText = e.title;
         document.getElementById('s-desc').innerText = e.desc;
-        
-        document.getElementById('choice-0-txt').innerText = e.c1.txt;
-        document.getElementById('choice-1-txt').innerText = e.c2.txt;
 
-        updateStats();
+        // Render Choices
+        const choicesContainer = document.getElementById('choices-container');
+        choicesContainer.innerHTML = ''; // Clear old buttons
+
+        e.choices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-choice';
+            
+            // Color code risk badge
+            let badgeColor = choice.riskLabel === 'High' ? '#d63031' : (choice.riskLabel === 'Med' ? '#fdcb6e' : '#00b894');
+            
+            btn.innerHTML = `
+                <span>${choice.txt}</span>
+                <span class="risk-badge" style="background:${badgeColor}">Risk: ${choice.riskLabel}</span>
+            `;
+            btn.onclick = () => makeChoice(choice.eff);
+            choicesContainer.appendChild(btn);
+        });
+
+        updateStatsDisplay();
     }
 
-    function choose(optionIndex) {
-        const e = events[currentQ];
-        const choice = optionIndex === 0 ? e.c1 : e.c2;
+    function makeChoice(eff) {
+        stats.money += eff.m;
+        stats.conn += eff.c;
+        stats.risk += eff.r;
 
-        stats.money += choice.m;
-        stats.conn += choice.c;
-        stats.risk += choice.r;
-        
-        // Clamp Risk
-        if(stats.risk < 0) stats.risk = 0;
-        if(stats.risk > 100) stats.risk = 100;
+        // Constraint Limits
+        stats.risk = Math.max(0, Math.min(100, stats.risk));
+        stats.conn = Math.max(0, Math.min(100, stats.conn));
 
         currentQ++;
         renderEvent();
     }
 
-    function updateStats() {
-        document.getElementById('val-money').innerText = stats.money + "M";
+    function updateStatsDisplay() {
+        document.getElementById('val-money').innerText = stats.money + " M";
         document.getElementById('val-conn').innerText = stats.conn;
         document.getElementById('val-risk').innerText = stats.risk + "%";
         
-        // Visual warning for risk
-        const riskVal = document.getElementById('val-risk');
-        if(stats.risk > 70) riskVal.style.color = "red";
-        else riskVal.style.color = "#e84118";
+        // Dynamic Color for Risk
+        const riskEl = document.getElementById('val-risk');
+        if(stats.risk < 40) riskEl.style.color = "#00b894";
+        else if(stats.risk < 75) riskEl.style.color = "#fdcb6e";
+        else riskEl.style.color = "#d63031";
     }
 
-    function endGame(forceStatus = null) {
+    function endGame(forceType = null) {
         document.getElementById('step-game').classList.remove('active');
         document.getElementById('step-end').classList.add('active');
+
         document.getElementById('end-company').innerText = companyName;
-        document.getElementById('end-money').innerText = stats.money + "M";
+        document.getElementById('end-money').innerText = stats.money + " M";
+        document.getElementById('end-conn').innerText = stats.conn;
         document.getElementById('end-risk').innerText = stats.risk + "%";
 
-        let status = "";
-        let desc = "";
-        let icon = "";
+        let status, desc, icon;
 
-        if (forceStatus === "bankrupt" || stats.money <= 0) {
+        if (forceType === "bankrupt") {
             status = "ล้มละลาย (Bankrupt)";
-            desc = "คุณพยายามทำธุรกิจ แต่สายป่านไม่ยาวพอ บริษัทต้องปิดตัวลง ท่ามกลางหนี้สิน";
-            icon = "💸";
-        } else if (forceStatus === "jail" || stats.risk >= 90) {
-            status = "นักโทษคดีทุจริต (Jail)";
-            desc = "ความเสี่ยงที่คุณก่อไว้ระเบิดออก! ปปช. ชี้มูลความผิด คุณถูกยึดทรัพย์และดำเนินคดี เส้นสายที่มีก็ช่วยไม่ได้";
-            icon = "🚓";
-        } else if (stats.conn > 50 && stats.risk > 50) {
-            status = "เจ้าสัวสัมปทาน (Crony Tycoon)";
-            desc = "บริษัทคุณยิ่งใหญ่คับประเทศ แต่เต็มไปด้วยข้อครหา คุณรวยมากแต่ต้องคอยระแวงภัยทางการเมืองตลอดเวลา";
-            icon = "🧛‍♂️";
-        } else if (stats.money > 30 && stats.risk < 30) {
-            status = "บริษัทธรรมาภิบาล (Market Leader)";
-            desc = "สุดยอด! คุณพาบริษัทเติบโตด้วยฝีมือล้วนๆ เป็นที่รักของลูกค้าและนักลงทุนอย่างยั่งยืน";
-            icon = "🦄";
+            desc = "กระแสเงินสดติดลบ ธุรกิจไปต่อไม่ไหว คุณถูกฟ้องล้มละลายและถูกยึดทรัพย์สินทั้งหมด";
+            icon = "📉";
+        } else if (forceType === "jail") {
+            status = "นักโทษคดีฉ้อโกง (Jail)";
+            desc = "ความเสี่ยงที่คุณสะสมไว้ระเบิดออก! ป.ป.ช. ชี้มูลความผิด เส้นสายที่มีก็ช่วยไม่ได้ คุณจบลงที่เรือนจำ";
+            icon = "👮";
         } else {
-            status = "บริษัทขนาดกลาง (SME Survivor)";
-            desc = "คุณประคองตัวรอดมาได้ ไม่รวยเปรี้ยงปร้างแต่ก็ไม่เสี่ยงคุก เป็นบทเรียนที่ดีในการบริหารต่อไป";
-            icon = "🏢";
+            // Success Endings based on stats
+            if (stats.conn > 60 && stats.risk > 50) {
+                status = "เจ้าพ่อสัมปทาน (The Crony Tycoon)";
+                desc = "คุณคือมหาเศรษฐีผู้ทรงอิทธิพล รัฐบาลต้องเกรงใจคุณ แต่สังคมตราหน้าว่าเป็นนายทุนผูกขาด";
+                icon = "🧛‍♂️";
+            } else if (stats.money > 40 && stats.risk < 30) {
+                status = "ตำนานนักธุรกิจมือสะอาด (Market Legend)";
+                desc = "คุณพาบริษัทเข้าตลาดหุ้นด้วยฝีมือล้วนๆ เป็นที่ยอมรับในระดับสากลและยั่งยืนอย่างแท้จริง";
+                icon = "🦄";
+            } else if (stats.money > 20) {
+                status = "นักธุรกิจเอาตัวรอด (The Survivor)";
+                desc = "คุณประคองธุรกิจให้เติบโตมาได้ มีแผลบ้าง มีเส้นบ้าง แต่ก็รอดมาได้จนถึงฝั่ง";
+                icon = "🏢";
+            } else {
+                status = "ธุรกิจขนาดกลาง (SME)";
+                desc = "การแข่งขันมันโหดร้าย บริษัทของคุณเติบโตได้ไม่มากนัก แต่ก็ภูมิใจที่ไม่ต้องโกงใคร";
+                icon = "🌱";
+            }
         }
 
         document.getElementById('end-status').innerText = status;
         document.getElementById('end-desc').innerText = desc;
         document.getElementById('end-icon').innerText = icon;
+    }
+
+    // --- Download Function ---
+    function downloadResult() {
+        const ui = document.getElementById("game-ui");
+        const btnGroup = document.getElementById("btn-group");
+        
+        // Hide buttons temporarily
+        btnGroup.style.display = 'none';
+        
+        html2canvas(ui, { scale: 2 }).then(canvas => {
+            // Restore buttons
+            btnGroup.style.display = 'block';
+            
+            // Trigger Download
+            const link = document.createElement("a");
+            link.download = `Report-${companyName}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
     }
 </script>
 
